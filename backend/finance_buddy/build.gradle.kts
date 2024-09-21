@@ -1,9 +1,10 @@
 plugins {
-	kotlin("jvm") version "1.9.25"
-	kotlin("plugin.spring") version "1.9.25"
-	id("org.springframework.boot") version "3.3.4"
-	id("io.spring.dependency-management") version "1.1.6"
-	kotlin("plugin.jpa") version "1.9.25"
+	kotlin("jvm") version "1.9.25" // Kotlin JVM 플러그인 설정
+	kotlin("plugin.spring") version "1.9.25" // Spring 지원 Kotlin 플러그인
+	kotlin("plugin.jpa") version "1.9.25" // JPA 관련 플러그인
+	kotlin("plugin.noarg") version "1.9.25" // No-arg 플러그인
+	id("org.springframework.boot") version "3.3.4" // Spring Boot 플러그인 설정
+	id("io.spring.dependency-management") version "1.1.6" // Spring 의존성 관리
 }
 
 group = "com.klolarion"
@@ -11,7 +12,7 @@ version = "0.0.1-SNAPSHOT"
 
 java {
 	toolchain {
-		languageVersion = JavaLanguageVersion.of(17)
+		languageVersion = JavaLanguageVersion.of(17) // Java 17 버전 사용 설정
 	}
 }
 
@@ -22,35 +23,37 @@ configurations {
 }
 
 repositories {
-	mavenCentral()
+	mavenCentral() // 중앙 저장소 사용
 }
 
 dependencies {
-	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-	implementation("org.springframework.boot:spring-boot-starter-jdbc")
-	implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
-	implementation("org.springframework.boot:spring-boot-starter-security")
-	implementation("org.springframework.boot:spring-boot-starter-validation")
-	implementation("org.springframework.boot:spring-boot-starter-web")
-	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-	implementation("org.jetbrains.kotlin:kotlin-reflect")
-	compileOnly("org.projectlombok:lombok")
-	developmentOnly("org.springframework.boot:spring-boot-devtools")
-	runtimeOnly("com.h2database:h2")
-	runtimeOnly("com.mysql:mysql-connector-j")
-	annotationProcessor("org.projectlombok:lombok")
-	testImplementation("org.springframework.boot:spring-boot-starter-test")
-	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
-	testImplementation("org.springframework.security:spring-security-test")
-	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-}
+	implementation("org.springframework.boot:spring-boot-starter-data-jpa") // JPA 사용
+	implementation("org.springframework.boot:spring-boot-starter-jdbc") // JDBC 사용
+	implementation("org.springframework.boot:spring-boot-starter-oauth2-client") // OAuth2 클라이언트
+	implementation("org.springframework.boot:spring-boot-starter-security") // Spring Security
+	implementation("org.springframework.boot:spring-boot-starter-validation") // 유효성 검사
+	implementation("org.springframework.boot:spring-boot-starter-web") // Web Starter
+	implementation("com.fasterxml.jackson.module:jackson-module-kotlin") // Kotlin을 위한 Jackson 모듈
 
-kotlin {
-	compilerOptions {
-		freeCompilerArgs.addAll("-Xjsr305=strict")
-	}
+	developmentOnly("org.springframework.boot:spring-boot-devtools") // 개발 전용 도구
+	runtimeOnly("com.h2database:h2") // H2 데이터베이스, 테스트 및 개발 환경용
+	runtimeOnly("com.mysql:mysql-connector-j") // MySQL 연결 드라이버
+
+	testImplementation("org.springframework.boot:spring-boot-starter-test") // 테스트 지원
+	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5") // Kotlin JUnit5 지원
+	testImplementation("org.springframework.security:spring-security-test") // Security 테스트 지원
+	testRuntimeOnly("org.junit.platform:junit-platform-launcher") // JUnit 플랫폼 런처
+
+	// JWT dependencies
+	implementation("io.jsonwebtoken:jjwt-api:0.11.5")
+	implementation("io.jsonwebtoken:jjwt-impl:0.11.5")
+	implementation("io.jsonwebtoken:jjwt-jackson:0.11.5")
 }
 
 tasks.withType<Test> {
-	useJUnitPlatform()
+	useJUnitPlatform() // JUnit Platform 사용
+}
+
+noArg {
+	annotation("jakarta.persistence.Entity") // @Entity를 가진 클래스에 no-arg 생성자를 추가
 }

@@ -1,3 +1,36 @@
 spring:
   application:
     name: finance_buddy
+
+  datasource:
+    url: jdbc:h2:mem:finance_buddy
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: sa
+  h2:
+    console:
+      enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google: # Google OAuth2 설정
+            client-id: your-google-client-id
+            client-secret: your-google-client-secret
+            scope: profile, email
+            redirect-uri: "{baseUrl}/login/oauth2/code/google" # 로그인 후 리다이렉트 URL
+            client-name: Google
+          naver: # Naver OAuth2 설정
+            client-id: your-naver-client-id
+            client-secret: your-naver-client-secret
+            authorization-grant-type: authorization_code
+            redirect-uri: "{baseUrl}/login/oauth2/code/naver"
+            client-name: Naver
+            client-authentication-method: POST
+            scope: name, email
+
