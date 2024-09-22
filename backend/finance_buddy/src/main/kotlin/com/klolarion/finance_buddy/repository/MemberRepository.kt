@@ -4,5 +4,6 @@ import com.klolarion.finance_buddy.entity.Member
 import org.springframework.data.jpa.repository.JpaRepository
 
 interface MemberRepository : JpaRepository<Member, Long>{
-    fun findByEmail(email: String): Member?
+    fun findByAccount(account: String): Member?
+    fun findByMemberName(memberName: String): Member?
 }

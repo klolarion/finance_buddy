@@ -8,6 +8,7 @@ import java.security.Key
 import java.util.*
 import io.jsonwebtoken.ExpiredJwtException
 
+
 @Component
 class JwtTokenProvider {
 
@@ -53,7 +54,6 @@ class JwtTokenProvider {
         return claims.subject.toLong()
     }
 
-    // Refresh Token을 이용한 새로운 Access Token 재발급
     fun refreshAccessToken(refreshToken: String): String {
         if (validateToken(refreshToken)) {
             val memberId = getMemberIdFromToken(refreshToken)

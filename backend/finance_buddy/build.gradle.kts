@@ -34,6 +34,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-validation") // 유효성 검사
 	implementation("org.springframework.boot:spring-boot-starter-web") // Web Starter
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin") // Kotlin을 위한 Jackson 모듈
+	implementation("org.springframework.boot:spring-boot-starter-webflux") //ai호출
 
 	developmentOnly("org.springframework.boot:spring-boot-devtools") // 개발 전용 도구
 	runtimeOnly("com.h2database:h2") // H2 데이터베이스, 테스트 및 개발 환경용

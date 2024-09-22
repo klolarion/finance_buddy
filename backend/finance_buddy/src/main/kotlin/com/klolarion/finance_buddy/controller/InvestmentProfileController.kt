@@ -20,4 +20,11 @@ class InvestmentProfileController(private val profileService: InvestmentProfileS
         val profile = profileService.getProfileById(id) ?: return ResponseEntity.notFound().build()
         return ResponseEntity.ok(profile)
     }
+
+    @PutMapping("/{id}")
+    fun modifyProfileById(@PathVariable id: Long, @RequestBody profile: InvestmentProfile): ResponseEntity<InvestmentProfile> {
+        val existingProfile = profileService.getProfileById(id) ?: return ResponseEntity.notFound().build()
+        val updatedProfile = profileService.updateProfile(existingProfile, profile)
+        return ResponseEntity.ok(updatedProfile)
+    }
 }

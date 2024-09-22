@@ -52,7 +52,7 @@ class CustomOAuth2UserService(
         val name = attributes["name"] as? String ?: "Unknown"
 
         // 사용자 정보를 저장 또는 업데이트하는 로직
-        val member = memberRepository.findByEmail(email) ?: Member(email = email, memberName = name)
+        val member = memberRepository.findByAccount(email) ?: Member(email = email, memberName = name)
         member.memberName = name // 필요시 추가 업데이트
         return memberRepository.save(member) // 저장 또는 업데이트된 멤버 반환
     }

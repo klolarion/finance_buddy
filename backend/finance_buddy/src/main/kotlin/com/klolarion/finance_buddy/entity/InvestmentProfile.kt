@@ -2,6 +2,7 @@ package com.klolarion.finance_buddy.entity
 
 import jakarta.persistence.*
 import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.Positive
 
 @Entity
 @Table(name = "investment_profiles")
@@ -10,19 +11,15 @@ data class InvestmentProfile(
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         val id: Long = 0,
 
-        @Column(nullable = false)
-        @field:NotBlank
-        val riskTolerance: String,
+        @field:Positive(message = "Age must be positive")
+        val age: Int,
 
-        @Column(nullable = false)
-        @field:NotBlank
-        val investmentHorizon: String,
+        @field:Positive(message = "Investment amount must be positive")
+        var investmentAmount: Double,
 
-        // PreferredAsset과의 관계 설정: OneToMany 예시
-        @OneToMany(fetch = FetchType.EAGER, cascade = [CascadeType.ALL])
-        @JoinColumn(name = "investment_profile_id")
-        val preferredAssets: Set<PreferredAsset> = emptySet(),
+        @field:NotBlank(message = "Investment period is required")
+        var investmentPeriod: String,
 
-        @Column(nullable = false)
-        val funds: Double
+        @field:NotBlank(message = "Preferred product is required")
+        var preferredProduct: String
 ) : BaseTime()
