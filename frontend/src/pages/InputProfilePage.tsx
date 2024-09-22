@@ -1,26 +1,30 @@
 import React, { useState } from 'react';
 import { Box, TextField, Button, Typography, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { saveProfile } from '../services/finance-buddy-api';
 
 const InputProfilePage = () => {
-    const [age, setAge] = useState('');
-    const [investmentAmount, setInvestmentAmount] = useState('');
+    const [age, setAge] = useState(0);
+    const [investmentAmount, setInvestmentAmount] = useState(0);
     const [investmentPeriod, setInvestmentPeriod] = useState('');
     const [preferredProduct, setPreferredProduct] = useState('');
     const navigate = useNavigate();
+
+    const invesmentProfile = {
+        age,
+        investmentAmount,
+        investmentPeriod,
+        preferredProduct
+    };
 
     const handleProfileSubmit = async (e) => {
         e.preventDefault();
 
         // 입력한 정보 저장 처리 로직 (API 호출 예시)
         try {
-            const response = await fetch('/api/save-profile', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ age, investmentAmount, investmentPeriod, preferredProduct }),
-            });
+            const response = await saveProfile(invesmentProfile);
 
-            if (response.ok) {
+            if (response.status === 200) {
                 // 성공 시 인덱스 페이지로 이동
                 navigate('/index');
             } else {

@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Box, TextField, Button, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { login } from '../services/finance-buddy-api';
 
 const LoginPage = () => {
-    const [email, setEmail] = useState('');
+    const [account, setAccount] = useState('');
     const navigate = useNavigate();
 
     const handleNext = async (e) => {
@@ -11,22 +12,18 @@ const LoginPage = () => {
 
         // 서버에 계정을 전송해 provider 확인 (예시 API 호출)
         try {
-            const response = await fetch('/api/check-provider', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email }),
-            });
+            const response = await login(account);
 
-            const { provider } = await response.json();
+            const { provider } = await response.data;
 
             if (provider) {
                 // provider에 따라 소셜 로그인 페이지로 리디렉션
-                navigate(`/social-login?provider=${provider}`);
+                navigate(`/social?provider=${provider}`);
             } else {
-                alert('해당 계정의 제공자를 찾을 수 없습니다.');
+                navigate(`/social?provider=${provider}`)
             }
         } catch (error) {
-            console.error('Error checking provider:', error);
+            navigate('/signup')
         }
     };
 
@@ -44,11 +41,11 @@ const LoginPage = () => {
             </Typography>
             <form onSubmit={handleNext}>
                 <TextField
-                    label="Email"
+                    label="Account"
                     variant="outlined"
                     fullWidth
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    value={account}
+                    onChange={(e) => setAccount(e.target.value)}
                     sx={{ mb: 2, borderRadius: '8px' }}
                 />
                 <Button

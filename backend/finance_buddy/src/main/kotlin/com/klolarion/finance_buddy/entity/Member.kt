@@ -15,7 +15,7 @@ class Member(
         @field:NotBlank
         var account: String = "",
 
-        @Column(unique = true, nullable = false)
+        @Column(unique = true)
         @field:Email
         var email: String = "",
 

@@ -24,7 +24,7 @@ class InvestmentProfileController(private val profileService: InvestmentProfileS
     @PutMapping("/{id}")
     fun modifyProfileById(@PathVariable id: Long, @RequestBody profile: InvestmentProfile): ResponseEntity<InvestmentProfile> {
         val existingProfile = profileService.getProfileById(id) ?: return ResponseEntity.notFound().build()
-        val updatedProfile = profileService.updateProfile(existingProfile, profile)
+        val updatedProfile = profileService.modifyProfileById(id, profile)
         return ResponseEntity.ok(updatedProfile)
     }
 }

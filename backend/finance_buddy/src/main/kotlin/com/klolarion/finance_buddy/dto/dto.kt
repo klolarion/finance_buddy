@@ -8,7 +8,6 @@ import jakarta.validation.constraints.Positive
 // 회원가입 요청
 data class SignupRequest(
         @field:NotBlank val account: String,
-        @field:NotBlank val provider: String
 )
 
 // 로그아웃 요청
@@ -49,9 +48,19 @@ data class ChatRequest(
         val message: String
 )
 
-// 챗봇 응답
-data class ChatResponse(
-        val response: String
+// Recommendation 데이터 클래스 정의
+data class Recommendation(
+        val message: String,
+        val name: String,
+        val type: String,
+        val issuer: String,
+        val issueDate: String? = null,
+        val expiryDate: String? = null,
+        val price: Double? = null,
+        val currency: String? = null,
+        val category: String,
+        val riskLevel: String? = null,
+        val interestRate: Double? = null
 )
 
 data class InvestmentProfile(

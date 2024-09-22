@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.*
 class MemberController(private val memberService: MemberService) {
 
     @PostMapping("/logout")
-    fun logout(@RequestBody logoutRequest: LogoutRequest) {
-        memberService.logout(logoutRequest)
+    fun logout() {
+        memberService.logout();
     }
 
     @GetMapping("/{id}")

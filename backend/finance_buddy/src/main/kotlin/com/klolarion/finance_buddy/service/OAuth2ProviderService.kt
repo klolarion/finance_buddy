@@ -14,10 +14,10 @@ class OAuth2ProviderService(
 ) {
 
     @Transactional
-    fun handleSocialLogin(provider: String, socialId: String, name: String, email: String): AuthResponse {
+    fun handleSocialLogin(provider: String, socialId: String, name: String, account: String): AuthResponse {
         // 소셜 로그인 후 받은 정보로 회원 확인 및 등록
-        val member = memberRepository.findByEmail(email) ?: Member(
-                email = email,
+        val member = memberRepository.findByAccount(account) ?: Member(
+                account = account,
                 memberName = name,
                 provider = provider
         ).also { memberRepository.save(it) }

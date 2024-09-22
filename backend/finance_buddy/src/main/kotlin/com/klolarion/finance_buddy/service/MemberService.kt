@@ -20,14 +20,8 @@ class MemberService(
     }
 
     // 로그아웃 처리
-    fun logout(logoutRequest: LogoutRequest) {
-        // 토큰 무효화 처리 로직
-        invalidateToken(logoutRequest.token)
+    fun logout() {
     }
 
-    // 예시 메서드: 토큰 무효화
-    private fun invalidateToken(token: String) {
-        // 토큰 무효화 처리 로직 (예: Redis 또는 DB에 저장된 토큰 제거)
-    }
 
 }

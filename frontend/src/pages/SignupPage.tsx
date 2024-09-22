@@ -1,26 +1,27 @@
 import React, { useState } from 'react';
 import { Box, TextField, Button, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { signup } from '../services/finance-buddy-api';
 
 const SignupPage = () => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [account, setAccount] = useState('');
     const navigate = useNavigate();
+
+    // 회원가입 요청 객체 생성
+    const signupRequest = {
+        account
+    };
 
     const handleSignup = async (e) => {
         e.preventDefault();
 
         // 회원가입 처리 로직 (API 호출 예시)
         try {
-            const response = await fetch('/api/signup', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password }),
-            });
+            const response = await signup(signupRequest);
 
-            if (response.ok) {
+            if (response.status === 200) {
                 // 회원가입 성공 시 로그인 페이지 또는 프로필 입력 페이지로 이동
-                navigate('/input-profile');
+                navigate('/login');
             } else {
                 alert('회원가입에 실패했습니다. 다시 시도해주세요.');
             }
@@ -43,11 +44,11 @@ const SignupPage = () => {
             </Typography>
             <form onSubmit={handleSignup}>
                 <TextField
-                    label="Email"
+                    label="Account"
                     variant="outlined"
                     fullWidth
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    value={account}
+                    onChange={(e) => setAccount(e.target.value)}
                     sx={{ mb: 2, borderRadius: '8px' }}
                 />
                 <Button

@@ -2,6 +2,7 @@ package com.klolarion.finance_buddy.config
 
 import com.klolarion.finance_buddy.filter.JwtAuthenticationFilter
 import com.klolarion.finance_buddy.service.CustomOAuth2UserService
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -15,6 +16,9 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 @Configuration
 @EnableWebSecurity
 class SecurityConfig(private val customOAuth2UserService: CustomOAuth2UserService, private val jwtAuthenticationFilter: JwtAuthenticationFilter) {
+    @Value("\${spring.base-url}")
+    private val baseUrl: String? = null
+
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
@@ -22,19 +26,19 @@ class SecurityConfig(private val customOAuth2UserService: CustomOAuth2UserServic
                 .csrf { it.disable() }
                 .authorizeHttpRequests { authz ->
                     authz
-                            .requestMatchers("/api/auth/**").permitAll() // 인증 관련 API는 허용
-                            .anyRequest().authenticated() // 그 외 요청은 인증 필요
+
+                            .anyRequest().permitAll()
                 }
                 .oauth2Login { oauth2 -> // OAuth2 로그인 설정
                     oauth2
-                            .loginPage("/login") // 사용자 정의 로그인 페이지 설정 (옵션)
+                            .loginPage("http://localhost:5173/login") // 사용자 정의 로그인 페이지 설정 (옵션)
                             .userInfoEndpoint { userInfo ->
                                 userInfo.userService(customOAuth2UserService) // 커스텀 OAuth2UserService 설정
                             }
-                            .defaultSuccessUrl("/index") // 로그인 성공 시 이동할 기본 URL
-                            .failureUrl("/login?error=true") // 로그인 실패 시 이동할 URL
+                            .defaultSuccessUrl("/") // 로그인 성공 시 이동할 기본 URL
+                            .failureUrl("http://localhost:5173/login?error=true") // 로그인 실패 시 이동할 URL
                 }
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
+//                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
 
         return http.build()
     }

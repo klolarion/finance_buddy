@@ -6,11 +6,24 @@ export interface InvestmentProfile {
     investmentHorizon: string; // 예: 단기, 중기, 장기
 }
 
-// 추천 항목 타입
-export interface Recommendation {
+export type Message = {
+    sender: string;
+    text: string;
+};
+
+export type Recommendation = {
+    message: string;
     name: string;
-    description: string;
-}
+    type: string;
+    issuer: string;
+    issueDate?: string;
+    expiryDate?: string;
+    price?: number;
+    currency?: string;
+    category: string;
+    riskLevel?: string;
+    interestRate?: number;
+};
 
 // 인증 응답 타입
 export interface AuthResponse {

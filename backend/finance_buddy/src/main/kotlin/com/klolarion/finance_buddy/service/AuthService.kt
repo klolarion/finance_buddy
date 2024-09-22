@@ -16,18 +16,17 @@ class AuthService(
 ) {
 
     // 로그인 처리
-    fun login(account: String): AuthResponse {
-        val user = memberRepository.findByAccount(account)
+    fun login(account: String): ProviderResponse {
+        val member = memberRepository.findByAccount(account)
                 ?: throw IllegalArgumentException("Account not found")
         // 토큰 발급 및 기타 로그인 관련 로직
-        return AuthResponse(token = "generated-token")
+        return ProviderResponse(provider = member.provider)
     }
 
     // 회원가입 처리
     fun signup(signupRequest: SignupRequest): AuthResponse {
         val newUser = Member(
-                email = signupRequest.account,
-                provider = signupRequest.provider
+                account = signupRequest.account,
         )
         memberRepository.save(newUser)
         // 회원가입 후 토큰 발급 등 추가 로직
