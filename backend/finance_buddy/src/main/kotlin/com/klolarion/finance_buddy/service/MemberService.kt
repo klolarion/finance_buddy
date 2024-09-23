@@ -1,12 +1,9 @@
 package com.klolarion.finance_buddy.service
 
-import com.klolarion.finance_buddy.dto.InvestmentRequest
-import com.klolarion.finance_buddy.dto.LogoutRequest
 import com.klolarion.finance_buddy.entity.Member
 import com.klolarion.finance_buddy.repository.MemberRepository
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 
 @Service
 class MemberService(

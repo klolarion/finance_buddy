@@ -1,56 +1,81 @@
 import { useState } from 'react';
-import { Box, TextField, Button, Typography, Paper, Divider, Card, CardContent, CardActions } from '@mui/material';
+import { Box, TextField, Button, Typography, Paper, Divider, Card, CardContent, CardActions, Chip, Stack } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { chatRequest } from '../services/finance-buddy-api';
-import { Message, Recommendation } from '../types/finance-buddy-types';
 
+// 메시지 타입 정의
+type Message = {
+    sender: string;
+    text: string;
+};
+
+// Recommendation 타입 정의
+type Recommendation = {
+    message: string;
+    name: string;
+    type: string;
+    issuer: string;
+    issueDate?: string;
+    expiryDate?: string;
+    price?: number;
+    currency?: string;
+    category: string;
+    riskLevel?: string;
+    interestRate?: number;
+};
 
 const IndexPage = () => {
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState('');
-    const [recommendations, setRecommendations] = useState<string[]>([]); // 중복 제거된 이름 리스트
-    const [details, setDetails] = useState<Recommendation[]>([]); // 중복 제거된 추천 객체 리스트
+    const [recommendations, setRecommendations] = useState<string[]>([]);
+    const [details, setDetails] = useState<Recommendation[]>([]);
     const navigate = useNavigate();
 
     const handleSendMessage = async () => {
         if (input.trim() === '') return;
 
-        // 사용자 메시지 추가
         const newMessage = { sender: 'user', text: input };
         setMessages((prevMessages) => [...prevMessages, newMessage]);
         setInput('');
 
         try {
             const response = await chatRequest({ message: input });
-
-
-            // 서버에서 전달된 recommendation 데이터들
+            console.log('Received response:', response);
             const newRecommendations = response.data;
 
             if (Array.isArray(newRecommendations)) {
-                // 첫 번째 recommendation의 message를 챗봇 응답으로 표시
                 const botMessage = newRecommendations[0]?.message || '자료없음';
                 setMessages((prevMessages) => [
                     ...prevMessages,
-                    { sender: 'bot', text: botMessage }, // 챗봇 응답은 중복되더라도 계속 표시
+                    { sender: 'bot', text: botMessage },
                 ]);
 
-                // 각 recommendation의 name을 누적하여 저장하되 중복 제거
-                const names = new Set([...recommendations, ...newRecommendations.map((rec) => rec.name)]);
-                setRecommendations(Array.from(names));
-
-                // recommendation 객체들을 누적하여 저장하되 중복 제거
-                const uniqueDetails = [...details, ...newRecommendations].filter(
-                    (rec, index, self) =>
-                        index === self.findIndex((t) => t.name === rec.name) // name 기준으로 중복 제거
+                // 추천 상품이 없는 경우 추가하지 않음
+                const validRecommendations = newRecommendations.filter(
+                    (rec) => rec.name !== '추천 상품 없음'
                 );
-                setDetails(uniqueDetails);
+
+                if (validRecommendations.length > 0) {
+                    // 중복되지 않은 name만 추가
+                    const names = new Set([...recommendations, ...validRecommendations.map((rec) => rec.name)]);
+                    setRecommendations(Array.from(names));
+
+                    // 중복되지 않은 추천 객체 추가
+                    const uniqueDetails = [...details, ...validRecommendations].filter(
+                        (rec, index, self) => index === self.findIndex((t) => t.name === rec.name)
+                    );
+                    setDetails(uniqueDetails);
+                }
             } else {
                 console.error('Received data is not in the expected array format:', newRecommendations);
             }
         } catch (error) {
             console.error('Error during chatbot interaction:', error);
         }
+    };
+
+    const addKeyword = (keyword: string) => {
+        setInput((prevInput) => `${prevInput} ${keyword}`.trim());
     };
 
     return (
@@ -60,6 +85,7 @@ const IndexPage = () => {
                 <Typography variant="h5" mb={2}>
                     Chatbot
                 </Typography>
+                
                 <Paper
                     variant="outlined"
                     sx={{ flex: 1, mb: 2, padding: 2, overflowY: 'auto', borderRadius: '8px' }}
@@ -74,8 +100,18 @@ const IndexPage = () => {
                         </Typography>
                     ))}
                 </Paper>
+                {/* 키워드 안내 */}
+                <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
+                    <Chip label="장기" onClick={() => addKeyword('장기')} />
+                    <Chip label="단기" onClick={() => addKeyword('단기')} />
+                    <Chip label="안정" onClick={() => addKeyword('안정')} />
+                    <Chip label="위험" onClick={() => addKeyword('위험')} />
+                    <Chip label="펀드" onClick={() => addKeyword('펀드')} />
+                    <Chip label="채권" onClick={() => addKeyword('채권')} />
+                    <Chip label="연금" onClick={() => addKeyword('연금')} />
+                </Stack>
                 <TextField
-                    placeholder="Type your message..."
+                    placeholder="예: 장기로 투자할만한 안정적인 펀드 추천해줘"
                     variant="outlined"
                     fullWidth
                     value={input}

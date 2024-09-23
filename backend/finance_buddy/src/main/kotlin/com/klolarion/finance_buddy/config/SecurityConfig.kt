@@ -26,7 +26,6 @@ class SecurityConfig(private val customOAuth2UserService: CustomOAuth2UserServic
                 .csrf { it.disable() }
                 .authorizeHttpRequests { authz ->
                     authz
-
                             .anyRequest().permitAll()
                 }
                 .oauth2Login { oauth2 -> // OAuth2 로그인 설정

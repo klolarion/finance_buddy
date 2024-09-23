@@ -6,12 +6,6 @@ import org.springframework.stereotype.Component
 @Component
 class ChatBotClient {
 
-    /**
-     * 사용자의 메시지를 처리하고 키워드를 추출하여 더미 데이터를 반환합니다.
-     *
-     * @param message 사용자가 입력한 메시지
-     * @return 추출된 키워드와 관련된 더미 데이터
-     */
     fun sendMessage(message: String): List<Recommendation> {
         // 간단한 키워드 추출 로직
         val keywords = extractKeywords(message)
@@ -22,23 +16,11 @@ class ChatBotClient {
         return dummyResponse
     }
 
-    /**
-     * 입력된 메시지에서 특정 키워드를 추출합니다.
-     *
-     * @param message 사용자가 입력한 메시지
-     * @return 추출된 키워드 목록
-     */
     private fun extractKeywords(message: String): List<String> {
         val keywords = listOf("안정", "위험", "단기", "장기", "펀드", "배당", "채권", "연금")
         return keywords.filter { keyword -> message.contains(keyword) }
     }
 
-    /**
-     * 추출된 키워드에 따라 더미 데이터를 반환합니다.
-     *
-     * @param keywords 추출된 키워드 목록
-     * @return 더미 추천 데이터 목록
-     */
     private fun generateDummyResponse(keywords: List<String>): List<Recommendation> {
         return when {
             keywords.containsAll(listOf("안정", "장기", "펀드")) -> {
