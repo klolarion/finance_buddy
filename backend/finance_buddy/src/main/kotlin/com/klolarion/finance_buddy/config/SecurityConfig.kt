@@ -15,7 +15,9 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 
 @Configuration
 @EnableWebSecurity
-class SecurityConfig(private val customOAuth2UserService: CustomOAuth2UserService, private val jwtAuthenticationFilter: JwtAuthenticationFilter) {
+class SecurityConfig(
+    private val customOAuth2UserService: CustomOAuth2UserService,
+    private val jwtAuthenticationFilter: JwtAuthenticationFilter) {
     @Value("\${spring.base-url}")
     private val baseUrl: String? = null
 
@@ -30,14 +32,14 @@ class SecurityConfig(private val customOAuth2UserService: CustomOAuth2UserServic
                 }
                 .oauth2Login { oauth2 -> // OAuth2 로그인 설정
                     oauth2
-                            .loginPage("http://localhost:5173/login") // 사용자 정의 로그인 페이지 설정 (옵션)
+                            .loginPage("http://localhost:5173/auth/google/login") // 사용자 정의 로그인 페이지 설정 (옵션)
                             .userInfoEndpoint { userInfo ->
                                 userInfo.userService(customOAuth2UserService) // 커스텀 OAuth2UserService 설정
                             }
-                            .defaultSuccessUrl("/") // 로그인 성공 시 이동할 기본 URL
+                            .defaultSuccessUrl("http://localhost:5173") // 로그인 성공 시 이동할 기본 URL
                             .failureUrl("http://localhost:5173/login?error=true") // 로그인 실패 시 이동할 URL
                 }
-//                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
 
         return http.build()
     }
