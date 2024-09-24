@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class OAuth2ProviderService(
         private val memberRepository: MemberRepository,
+        private val memberService: MemberService,
         private val jwtTokenProvider: JwtTokenProvider
 ) {
 
