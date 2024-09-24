@@ -1,6 +1,5 @@
 package com.klolarion.finance_buddy.dto
 
-import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.Positive
 
@@ -56,11 +55,11 @@ data class Recommendation(
         val issuer: String,
         val issueDate: String? = null,
         val expiryDate: String? = null,
-        val price: Double? = null,
+        val price: Number? = null,
         val currency: String? = null,
         val category: String,
         val riskLevel: String? = null,
-        val interestRate: Double? = null
+        val interestRate: Number? = null
 )
 
 data class InvestmentProfile(

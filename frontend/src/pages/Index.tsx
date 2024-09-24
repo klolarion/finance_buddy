@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Box, TextField, Button, Typography, Paper, Divider, Card, CardContent, CardActions, Chip, Stack } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { chatRequest } from '../services/finance-buddy-api';
@@ -27,9 +27,19 @@ type Recommendation = {
 const IndexPage = () => {
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState('');
-    const [recommendations, setRecommendations] = useState<string[]>([]);
+    const [recommendations, setRecommendations] = useState<{ [key: string]: Recommendation[] }>(() => JSON.parse(localStorage.getItem('recommendations') || '{}'));
     const [details, setDetails] = useState<Recommendation[]>([]);
+    const [responseStatus, setResponseStatus] = useState<string>('');
     const navigate = useNavigate();
+
+    useEffect(() => {
+        localStorage.setItem('recommendations', JSON.stringify(recommendations));
+        // 첫 번째 추천 메시지가 있으면 첫 번째 detail을 자동으로 보여줌
+        if (Object.keys(recommendations).length > 0) {
+            const firstMessage = Object.keys(recommendations)[0];
+            setDetails(recommendations[firstMessage] || []);
+        }
+    }, [recommendations]);
 
     const handleSendMessage = async () => {
         if (input.trim() === '') return;
@@ -37,40 +47,38 @@ const IndexPage = () => {
         const newMessage = { sender: 'user', text: input };
         setMessages((prevMessages) => [...prevMessages, newMessage]);
         setInput('');
+        setResponseStatus('Fetching data...'); // 챗봇 응답 상태 초기화
 
         try {
             const response = await chatRequest({ message: input });
-            console.log('Received response:', response);
+
+
             const newRecommendations = response.data;
 
             if (Array.isArray(newRecommendations)) {
-                const botMessage = newRecommendations[0]?.message || '자료없음';
+                const botMessage = newRecommendations.length > 0 ? '추천 상품을 찾았습니다.' : '추천할만한 상품이 없습니다. 다시 입력해보세요.';
                 setMessages((prevMessages) => [
                     ...prevMessages,
                     { sender: 'bot', text: botMessage },
                 ]);
 
-                // 추천 상품이 없는 경우 추가하지 않음
-                const validRecommendations = newRecommendations.filter(
-                    (rec) => rec.name !== '추천 상품 없음'
-                );
-
-                if (validRecommendations.length > 0) {
-                    // 중복되지 않은 name만 추가
-                    const names = new Set([...recommendations, ...validRecommendations.map((rec) => rec.name)]);
-                    setRecommendations(Array.from(names));
-
-                    // 중복되지 않은 추천 객체 추가
-                    const uniqueDetails = [...details, ...validRecommendations].filter(
-                        (rec, index, self) => index === self.findIndex((t) => t.name === rec.name)
-                    );
-                    setDetails(uniqueDetails);
-                }
+                // 사용자 입력 메시지와 해당 추천 데이터를 연결하여 로컬에 저장
+                setRecommendations((prevRecommendations) => ({
+                    ...prevRecommendations,
+                    [input]: newRecommendations,
+                }));
             } else {
-                console.error('Received data is not in the expected array format:', newRecommendations);
+                setMessages((prevMessages) => [
+                    ...prevMessages,
+                    { sender: 'bot', text: '데이터 타입 오류.' },
+                ]);
             }
         } catch (error) {
-            console.error('Error during chatbot interaction:', error);
+            setMessages((prevMessages) => [
+                ...prevMessages,
+                { sender: 'bot', text: '챗봇과 상호작용에 실패했습니다.' },
+            ]);
+            
         }
     };
 
@@ -78,12 +86,25 @@ const IndexPage = () => {
         setInput((prevInput) => `${prevInput} ${keyword}`.trim());
     };
 
+    const handleRecommendationClick = (message: string) => {
+        const selectedDetails = recommendations[message] || [];
+        setDetails(selectedDetails);
+    };
+
+    const handleReset = () => {
+        localStorage.removeItem('recommendations');
+        setRecommendations({});
+        setDetails([]);
+        setMessages([]);
+        setResponseStatus('Data reset successfully.');
+    };
+
     return (
         <Box display="flex" height="80vh" p={2} width="100%">
             {/* Chatbot Section */}
             <Box flex={2} display="flex" flexDirection="column" p={2}>
                 <Typography variant="h5" mb={2}>
-                    Chatbot
+                    챗봇
                 </Typography>
                 
                 <Paper
@@ -104,8 +125,9 @@ const IndexPage = () => {
                 <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
                     <Chip label="장기" onClick={() => addKeyword('장기')} />
                     <Chip label="단기" onClick={() => addKeyword('단기')} />
-                    <Chip label="안정" onClick={() => addKeyword('안정')} />
+                    <Chip label="안전" onClick={() => addKeyword('안전')} />
                     <Chip label="위험" onClick={() => addKeyword('위험')} />
+                    <Chip label="고위험" onClick={() => addKeyword('고위험')} />
                     <Chip label="펀드" onClick={() => addKeyword('펀드')} />
                     <Chip label="채권" onClick={() => addKeyword('채권')} />
                     <Chip label="연금" onClick={() => addKeyword('연금')} />
@@ -125,7 +147,15 @@ const IndexPage = () => {
                     onClick={handleSendMessage}
                     sx={{ mt: 1, borderRadius: '8px' }}
                 >
-                    Send
+                    전송
+                </Button>
+                <Button
+                    variant="outlined"
+                    color="secondary"
+                    onClick={handleReset}
+                    sx={{ mt: 1, borderRadius: '8px' }}
+                >
+                    초기화
                 </Button>
             </Box>
 
@@ -134,20 +164,24 @@ const IndexPage = () => {
             {/* Recommendations Section */}
             <Box flex={2} p={2}>
                 <Typography variant="h5" mb={2}>
-                    Recommendations
+                    검색 기록
                 </Typography>
                 <Paper
                     variant="outlined"
                     sx={{ padding: 2, overflowY: 'auto', borderRadius: '8px', height: '85%' }}
                 >
-                    {recommendations.length > 0 ? (
-                        recommendations.map((name, index) => (
-                            <Typography key={index} sx={{ mb: 1 }}>
-                                {name}
+                    {Object.keys(recommendations).length > 0 ? (
+                        Object.keys(recommendations).map((message, index) => (
+                            <Typography
+                                key={index}
+                                sx={{ mb: 1, cursor: 'pointer' }}
+                                onClick={() => handleRecommendationClick(message)}
+                            >
+                                {message}
                             </Typography>
                         ))
                     ) : (
-                        <Typography color="textSecondary">No recommendations yet.</Typography>
+                        <Typography color="textSecondary">검색기록이 없습니다.</Typography>
                     )}
                 </Paper>
             </Box>
@@ -157,7 +191,7 @@ const IndexPage = () => {
             {/* Details Section */}
             <Box flex={4} p={2}>
                 <Typography variant="h5" mb={2}>
-                    Details
+                    추천목록
                 </Typography>
                 <Paper
                     variant="outlined"
@@ -171,46 +205,45 @@ const IndexPage = () => {
                                         {rec.name}
                                     </Typography>
                                     <Typography color="textSecondary">
-                                        Type: {rec.type}
+                                        종류: {rec.type}
                                     </Typography>
                                     <Typography color="textSecondary">
-                                        Issuer: {rec.issuer}
+                                        주체: {rec.issuer}
                                     </Typography>
                                     {rec.issueDate && (
                                         <Typography color="textSecondary">
-                                            Issue Date: {rec.issueDate}
+                                            발행일: {rec.issueDate}
                                         </Typography>
                                     )}
                                     {rec.expiryDate && (
                                         <Typography color="textSecondary">
-                                            Expiry Date: {rec.expiryDate}
+                                            만기일: {rec.expiryDate}
                                         </Typography>
                                     )}
                                     {rec.price && (
                                         <Typography color="textSecondary">
-                                            Price: {rec.price} {rec.currency}
+                                            가격: {rec.price} {rec.currency}
                                         </Typography>
                                     )}
-                                    {rec.interestRate && (
                                         <Typography color="textSecondary">
-                                            Interest Rate: {rec.interestRate}%
+                                            이자/배당율: {rec.interestRate}%
                                         </Typography>
-                                    )}
+                                    
                                     {rec.riskLevel && (
                                         <Typography color="textSecondary">
-                                            Risk Level: {rec.riskLevel}
+                                            위험도: {rec.riskLevel}
                                         </Typography>
                                     )}
                                 </CardContent>
                                 <CardActions>
                                     <Button size="small" color="primary">
-                                        Learn More
+                                        자세히 알아보기
                                     </Button>
                                 </CardActions>
                             </Card>
                         ))
                     ) : (
-                        <Typography color="textSecondary">No recommendations yet.</Typography>
+                        <Typography color="textSecondary">추천 목록이 없습니다.</Typography>
                     )}
                 </Paper>
             </Box>
