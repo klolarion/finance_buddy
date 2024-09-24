@@ -16,11 +16,11 @@ class AuthService(
 ) {
 
     // 로그인 처리
-    fun login(account: String): ProviderResponse {
+    fun login(account: String): String {
         val member = memberRepository.findByAccount(account)
                 ?: throw IllegalArgumentException("Account not found")
         // 토큰 발급 및 기타 로그인 관련 로직
-        return ProviderResponse(provider = member.provider)
+        return member.provider
     }
 
     // 회원가입 처리

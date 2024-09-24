@@ -51,6 +51,7 @@ class SecurityConfig(private val customOAuth2UserService: CustomOAuth2UserServic
             allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS") // 허용할 HTTP 메서드
             allowedHeaders = listOf("*") // 허용할 헤더
             allowCredentials = true // 자격 증명 허용
+            exposedHeaders = listOf("Access", "Refresh") // 노출할 헤더 설정
             maxAge = 3600 // CORS 설정 캐시 시간 (1시간)
         }
         source.registerCorsConfiguration("/**", config)

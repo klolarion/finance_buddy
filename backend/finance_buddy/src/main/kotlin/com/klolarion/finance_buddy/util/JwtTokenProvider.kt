@@ -53,7 +53,7 @@ class JwtTokenProvider {
         val claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).body
         return claims.subject.toLong()
     }
-
+//
     fun refreshAccessToken(refreshToken: String): String {
         if (validateToken(refreshToken)) {
             val memberId = getMemberIdFromToken(refreshToken)

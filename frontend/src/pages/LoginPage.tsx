@@ -14,6 +14,18 @@ const LoginPage = () => {
         try {
             const response = await login(account);
 
+            const accessToken = response.headers.get('Access');
+            const refreshToken = response.headers.get('Refresh');
+            console.log(accessToken)
+
+            if (accessToken && refreshToken) {
+                localStorage.setItem('accessToken', accessToken);
+                localStorage.setItem('refreshToken', refreshToken);
+                console.log('토큰이 로컬 스토리지에 저장되었습니다.');
+            } else {
+                console.error('토큰을 가져오는 데 실패했습니다.');
+        }
+
             const { provider } = await response.data;
 
             if (provider) {
