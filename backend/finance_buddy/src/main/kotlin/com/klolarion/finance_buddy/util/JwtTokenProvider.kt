@@ -65,14 +65,14 @@ class JwtTokenProvider {
     }
 
     // 토큰에서 memberId 추출
-    fun getMemberIdFromToken(token: String): Long {
+    fun getMemberFromToken(token: String): Long {
         val claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).body
         logger.info("토큰에서 추출된 Member ID: ${claims.subject}")
         return claims.subject.toLong()
     }
     fun refreshAccessToken(refreshToken: String): String {
         if (validateToken(refreshToken)) {
-            val memberId = getMemberIdFromToken(refreshToken)
+            val memberId = getMemberFromToken(refreshToken)
             logger.info("Refresh Token을 사용하여 새로운 Access Token 생성: Member ID = $memberId")
             return createAccessToken(memberId)
         } else {

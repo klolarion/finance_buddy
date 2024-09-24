@@ -41,7 +41,6 @@ interface InvestmentProfile {
     preferredProduct: string;
 }
 
-// API 함수들
 
 // 로그인 - 계정 기반 로그인
 export const login = async (account: string) => {

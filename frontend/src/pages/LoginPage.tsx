@@ -22,8 +22,8 @@ const LoginPage = () => {
     try {
       const response = await login(account);
 
-            const accessToken = response.headers.get('Access');
-            const refreshToken = response.headers.get('Refresh');
+            const accessToken = response.headers.get('access');
+            const refreshToken = response.headers.get('refresh');
             console.log(accessToken)
 
             if (accessToken && refreshToken) {
@@ -71,10 +71,9 @@ const LoginPage = () => {
       </Typography>
       <form onSubmit={handleNext}>
         <TextField
-          label="Account(Email)"
+          label="Account"
           variant="outlined"
           fullWidth
-          type="email"
           value={account}
           onChange={(e) => setAccount(e.target.value)}
           sx={{ mb: 2, borderRadius: "8px" }}

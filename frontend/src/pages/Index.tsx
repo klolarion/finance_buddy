@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Box, TextField, Button, Typography, Paper, Divider, Card, CardContent, CardActions, Chip, Stack } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { chatRequest } from '../services/finance-buddy-api';
+import axios from 'axios';
 
 // 메시지 타입 정의
 type Message = {
@@ -40,6 +41,32 @@ const IndexPage = () => {
             setDetails(recommendations[firstMessage] || []);
         }
     }, [recommendations]);
+
+    useEffect(() => {
+        const accessToken = localStorage.getItem('accessToken');
+        const refreshToken = localStorage.getItem('refreshToken');
+      
+        if (!accessToken || !refreshToken) {
+          navigate('/login');
+          return;
+        }
+      
+        // 헤더에 토큰을 담아 검증 요청
+        axios
+          .get('http://localhost:8080/api/index', {
+            headers: {
+              Access: accessToken, 
+              Refresh: refreshToken, 
+            },
+          })
+          .then((response) => {
+            console.log('토큰 검증 성공:');
+          })
+          .catch((error) => {
+            console.error('토큰 검증 실패:');
+            navigate('/login');
+          });
+      }, [navigate]);
 
     const handleSendMessage = async () => {
         if (input.trim() === '') return;
