@@ -1,3 +1,14 @@
 spring:
+  base-url: http://localhost:8080
   application:
     name: finance_buddy
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/finance_buddy_db
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: 1234
+
+  jpa:
+    hibernate:
+      ddl-auto: update
