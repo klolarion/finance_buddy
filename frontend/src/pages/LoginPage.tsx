@@ -36,21 +36,14 @@ const LoginPage = () => {
 
             const { provider } = await response.data;
 
-      console.log(response.data);
-      console.log(accessToken);
-      console.log(refreshToken);
-
       localStorage.setItem("accessToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
-      if (provider) {
-        // provider에 따라 소셜 로그인 페이지로 리디렉션
-        navigate(`/social?provider=${provider}`);
-      } else {
-        navigate(`/social?provider=${provider}`);
-      }
+      
+      navigate("/");
+
     } catch (error) {
       console.error("Login error:", error);
-      alert("Account not found. Redirecting to signup page.");
+      alert("계정이 없습니다. 회원가입 페이지로 이동합니다.");
       navigate("/signup");
     } finally {
       setLoading(false);

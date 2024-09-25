@@ -1,5 +1,5 @@
-// Header.js
-import React, { useEffect, useState } from "react";
+
+import { useEffect, useState } from "react";
 import { AppBar, Toolbar, Typography, Button, Box } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
@@ -45,9 +45,6 @@ const Header = () => {
           {isLoggedIn ? (
             // 로그인된 상태
             <>
-              <Button color="inherit" onClick={() => navigate("/my-page")}>
-                My Page
-              </Button>
               <Button color="inherit" onClick={handleLogout}>
                 Logout
               </Button>

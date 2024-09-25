@@ -14,6 +14,12 @@ class ChatBotService(
     // 챗봇 요청 처리
     fun getRecommendations(inputText: String, riskLevel: String?, duration: String?, type: String?): List<Recommendation>? {
 
+
+
+        println(duration)
+        println(riskLevel)
+        println(type)
+
         val pageable: Pageable = PageRequest.of(0, 10)
         // 추천 상품을 검색하여 10개만 무작위로 선택
         val recommendations = financialProductsRepository.findRecommendations(

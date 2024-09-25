@@ -18,7 +18,6 @@ class ChatBotController(
 
     @PostMapping("/request")
     fun handleChatRequest(@RequestBody chatRequest: ChatRequest): ResponseEntity<out Any?>? {
-//        val response = chatBotService.processRequest(chatRequest)
 
         val inputText = chatRequest.message;
         val flaskUrl = "http://localhost:5001/predict" // Flask server URL
@@ -37,14 +36,14 @@ class ChatBotController(
         }
         val flaskResponse = response.body as? Map<String, Any>
 
-        println(flaskResponse)
-        // Extract the nested "extracted_features" map
         val extractedFeatures = flaskResponse?.get("extracted_features") as? Map<String, String>
 
 
         val duration = extractedFeatures?.get("duration")
         val riskLevel = extractedFeatures?.get("risk_level")
         val type = extractedFeatures?.get("type")
+
+
 
         var recommendations = chatBotService.getRecommendations(inputText, riskLevel, duration, type)
 

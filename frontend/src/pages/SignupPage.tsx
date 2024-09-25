@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Box,
   TextField,
@@ -25,6 +25,7 @@ const SignupPage = () => {
     // 회원가입 처리 로직 (API 호출 예시)
     try {
       const response = await signup(signupRequest);
+      console.log(response.status)
 
       if (response.status === 200) {
         // 회원가입 성공 시 로그인 페이지 또는 프로필 입력 페이지로 이동
@@ -54,10 +55,9 @@ const SignupPage = () => {
       </Typography>
       <form onSubmit={handleSignup}>
         <TextField
-          label="Account(Email)"
+          label="Account"
           variant="outlined"
           fullWidth
-          type="email"
           value={account}
           onChange={(e) => setAccount(e.target.value)}
           sx={{ mb: 2, borderRadius: "8px" }}

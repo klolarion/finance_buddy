@@ -1,13 +1,15 @@
 package com.klolarion.finance_buddy.config
 
-import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.http.MediaType
+import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
 @Configuration
-class WebClientConfig {
-    @Bean
-    fun webClient(): WebClient {
-        return WebClient.builder().build()
+class WebClientConfig : WebMvcConfigurer {
+    override fun configureContentNegotiation(configurer: ContentNegotiationConfigurer) {
+        configurer
+                .defaultContentType(MediaType.APPLICATION_JSON)
+                .mediaType("json", MediaType.APPLICATION_JSON)
     }
 }

@@ -15,19 +15,6 @@ class Member(
         @field:NotBlank
         var account: String = "",
 
-        @Column(unique = true)
-        @field:Email
-        var email: String = "",
-
-        @Column(nullable = false)
-        var memberName: String = "",
-
-        var provider: String = "",
-        var socialId: String = "",
-
-        @OneToOne(cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
-        @JoinColumn(name = "investment_profile_id", referencedColumnName = "id")
-        var investmentProfile: InvestmentProfile? = null
 ) : BaseTime()
 
 

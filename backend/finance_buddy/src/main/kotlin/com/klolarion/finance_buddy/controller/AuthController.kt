@@ -2,46 +2,38 @@ package com.klolarion.finance_buddy.controller
 
 import com.klolarion.finance_buddy.dto.*
 import com.klolarion.finance_buddy.service.AuthService
-import com.klolarion.finance_buddy.util.JwtTokenProvider
-import jakarta.servlet.http.Cookie
+import com.klolarion.finance_buddy.util.TokenProvider
 import jakarta.servlet.http.HttpServletResponse
 import jakarta.validation.Valid
+import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/auth")
 class AuthenticationController(private val authService: AuthService,
-        private val jwtTokenProvider: JwtTokenProvider) {
+        private val jwtTokenProvider: TokenProvider) {
 
     /*가입한 계정 입력*/
-    @PostMapping("/login/{account}")
-    fun login(@PathVariable account: String, response: HttpServletResponse): String {
-        val provider = authService.login(account);
-        val accessToken = jwtTokenProvider.createAccessToken(1L);
-        val refreshToken = jwtTokenProvider.createRefreshToken(1L);
+    @PostMapping("/login/{account}", produces = [MediaType.APPLICATION_JSON_VALUE])
+    fun login(@PathVariable account: String, response: HttpServletResponse): ResponseEntity<Any> {
 
-            response.setHeader("Access", accessToken)
-            response.setHeader("Refresh", refreshToken)
+        val member = authService.login(account);
 
+        val accessToken = jwtTokenProvider.createAccessToken(member.id);
+        val refreshToken = jwtTokenProvider.createRefreshToken(member.id);
+        response.setHeader("Access", accessToken)
+        response.setHeader("Refresh", refreshToken)
 
-
-
-        return provider;
+        return ResponseEntity<Any>(HttpStatus.OK);
     }
 
     @PostMapping("/signup")
-    fun signup(@RequestBody @Valid signupRequest: SignupRequest): AuthResponse {
-        return authService.signup(signupRequest)
+    fun signup(@RequestBody @Valid signupRequest: SignupRequest): ResponseEntity<Any> {
+        authService.signup(signupRequest)
+        return ResponseEntity<Any>(HttpStatus.OK);
     }
 
-    @GetMapping("/find-account")
-    fun findAccount(@RequestParam email: String): ProviderResponse {
-        return authService.findAccount(email)
-    }
-
-    @GetMapping("/social-login/{provider}")
-    fun socialLogin(@PathVariable provider: String, @RequestParam code: String): AuthResponse {
-        return authService.socialLogin(provider, code)
-    }
 
 }

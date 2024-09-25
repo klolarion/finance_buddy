@@ -1,8 +1,6 @@
 package com.klolarion.finance_buddy.config
 
 import com.klolarion.finance_buddy.filter.JwtAuthenticationFilter
-import com.klolarion.finance_buddy.service.CustomOAuth2UserService
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -16,28 +14,17 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 @Configuration
 @EnableWebSecurity
 class SecurityConfig(
-    private val customOAuth2UserService: CustomOAuth2UserService,
     private val jwtAuthenticationFilter: JwtAuthenticationFilter) {
-    @Value("\${spring.base-url}")
-    private val baseUrl: String? = null
 
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http
                 .cors { it.configurationSource(corsConfigurationSource()) } // 최신 방식의 CORS 설정
                 .csrf { it.disable() }
-                .authorizeHttpRequests { authz ->
-                    authz
-                            .anyRequest().permitAll()
-                }
-                .oauth2Login { oauth2 -> // OAuth2 로그인 설정
-                    oauth2
-                            .loginPage("http://localhost:5173/auth/google/login") // 사용자 정의 로그인 페이지 설정 (옵션)
-                            .userInfoEndpoint { userInfo ->
-                                userInfo.userService(customOAuth2UserService) // 커스텀 OAuth2UserService 설정
-                            }
-                            .defaultSuccessUrl("http://localhost:5173") // 로그인 성공 시 이동할 기본 URL
-                            .failureUrl("http://localhost:5173/login?error=true") // 로그인 실패 시 이동할 URL
+                .authorizeHttpRequests { auth ->
+                    auth
+                            .requestMatchers("/api/auth/**").permitAll()
+                            .anyRequest().authenticated()
                 }
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter::class.java)
 
@@ -53,7 +40,7 @@ class SecurityConfig(
             allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS") // 허용할 HTTP 메서드
             allowedHeaders = listOf("*") // 허용할 헤더
             allowCredentials = true // 자격 증명 허용
-            exposedHeaders = listOf("Access", "Refresh") // 노출할 헤더 설정
+            exposedHeaders = listOf("Accept", "Access", "Refresh") // 노출할 헤더 설정
             maxAge = 3600 // CORS 설정 캐시 시간 (1시간)
         }
         source.registerCorsConfiguration("/**", config)

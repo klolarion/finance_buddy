@@ -5,5 +5,4 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 interface MemberRepository : JpaRepository<Member, Long>{
     fun findByAccount(account: String): Member?
-    fun findByMemberName(memberName: String): Member?
 }

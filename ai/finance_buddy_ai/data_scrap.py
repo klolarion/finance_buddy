@@ -37,7 +37,7 @@ def fetch_data_from_api(url, params):
 # API URL 및 파라미터 설정
 bond_url = "http://apis.data.go.kr/1160100/service/GetBondIssuInfoService/getBondBasiInfo?pageNo=1&numOfRows=15000&resultType=json&serviceKey=key"
 fund_url = "http://apis.data.go.kr/1160100/service/GetFundProductInfoService/getStandardCodeInfo?serviceKey=key&resultType=json&pageNo=1&numOfRows=15000"
-pension_url = "http://apis.data.go.kr/1160100/service/GetRetirementPensionInfoService/getFundInfo?serviceKey=keyresultType=json&pageNo=1&numOfRows=15000"
+pension_url = "http://apis.data.go.kr/1160100/service/GetRetirementPensionInfoService/getFundInfo?serviceKey=key&resultType=json&pageNo=1&numOfRows=15000"
 
 
 

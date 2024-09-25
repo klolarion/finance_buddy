@@ -38,3 +38,21 @@ export interface User {
     memberName: string;
     provider: string; // 예: Google, Naver
 }
+
+export interface SignupRequest {
+    account: string;
+}
+
+
+export interface ProviderResponse {
+    provider: string;
+}
+
+export interface LogoutRequest {
+    token: string;
+}
+
+
+export interface ChatRequest {
+    message: string;
+}

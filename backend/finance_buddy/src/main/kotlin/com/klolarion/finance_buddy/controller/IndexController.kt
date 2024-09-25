@@ -1,5 +1,6 @@
 package com.klolarion.finance_buddy.controller
 
+import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
@@ -7,9 +8,9 @@ import org.springframework.web.bind.annotation.*
 @RequestMapping("/api/index")
 class IndexController {
 
-    @GetMapping
+    @GetMapping(produces = [MediaType.APPLICATION_JSON_VALUE])
     fun getProfileById(): Any {
-        return ResponseEntity.ok();
+        return ResponseEntity.ok("인증 성공");
     }
 
 }

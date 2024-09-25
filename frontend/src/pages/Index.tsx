@@ -3,34 +3,14 @@ import { Box, TextField, Button, Typography, Paper, Divider, Card, CardContent, 
 import { useNavigate } from 'react-router-dom';
 import { chatRequest } from '../services/finance-buddy-api';
 import axios from 'axios';
+import { Message, Recommendation } from '../types/finance-buddy-types';
 
-// 메시지 타입 정의
-type Message = {
-    sender: string;
-    text: string;
-};
-
-// Recommendation 타입 정의
-type Recommendation = {
-    message: string;
-    name: string;
-    type: string;
-    issuer: string;
-    issueDate?: string;
-    expiryDate?: string;
-    price?: number;
-    currency?: string;
-    category: string;
-    riskLevel?: string;
-    interestRate?: number;
-};
 
 const IndexPage = () => {
     const [messages, setMessages] = useState<Message[]>([]);
     const [input, setInput] = useState('');
     const [recommendations, setRecommendations] = useState<{ [key: string]: Recommendation[] }>(() => JSON.parse(localStorage.getItem('recommendations') || '{}'));
     const [details, setDetails] = useState<Recommendation[]>([]);
-    const [responseStatus, setResponseStatus] = useState<string>('');
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -52,21 +32,21 @@ const IndexPage = () => {
         }
       
         // 헤더에 토큰을 담아 검증 요청
-        axios
-          .get('http://localhost:8080/api/index', {
+        axios.get('http://localhost:8080/api/index', {
             headers: {
-              Access: accessToken, 
-              Refresh: refreshToken, 
-            },
+              'Accept': 'application/json',  // JSON 형식의 응답을 기대
+              'Access': accessToken,
+              'Refresh': refreshToken
+            }
           })
-          .then((response) => {
-            console.log('토큰 검증 성공:');
-          })
-          .catch((error) => {
-            console.error('토큰 검증 실패:');
-            navigate('/login');
-          });
-      }, [navigate]);
+            .then((response) => {
+            })
+            .catch((error) => {
+              navigate('/login');
+              
+            });
+        
+      }, []);
 
     const handleSendMessage = async () => {
         if (input.trim() === '') return;
@@ -74,7 +54,6 @@ const IndexPage = () => {
         const newMessage = { sender: 'user', text: input };
         setMessages((prevMessages) => [...prevMessages, newMessage]);
         setInput('');
-        setResponseStatus('Fetching data...'); // 챗봇 응답 상태 초기화
 
         try {
             const response = await chatRequest({ message: input });
@@ -123,7 +102,6 @@ const IndexPage = () => {
         setRecommendations({});
         setDetails([]);
         setMessages([]);
-        setResponseStatus('Data reset successfully.');
     };
 
     return (
