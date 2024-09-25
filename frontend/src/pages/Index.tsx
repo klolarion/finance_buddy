@@ -84,6 +84,9 @@ const IndexPage = () => {
                 ...prevMessages,
                 { sender: 'bot', text: '챗봇과 상호작용에 실패했습니다.' },
             ]);
+            navigate('/login');
+
+    
             
         }
     };
