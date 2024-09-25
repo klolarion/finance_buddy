@@ -15,7 +15,7 @@ const SignupPage = () => {
   const navigate = useNavigate();
 
   // 회원가입 요청 객체 생성
-  const signupRequest = {
+  const signinRequest = {
     account,
   };
 
@@ -24,7 +24,7 @@ const SignupPage = () => {
     setLoading(true);
     // 회원가입 처리 로직 (API 호출 예시)
     try {
-      const response = await signup(signupRequest);
+      const response = await signup(signinRequest);
       console.log(response.status)
 
       if (response.status === 200) {
@@ -51,11 +51,11 @@ const SignupPage = () => {
       sx={{ padding: 3 }}
     >
       <Typography variant="h4" mb={2}>
-        Sign Up
+        Sign In
       </Typography>
       <form onSubmit={handleSignup}>
         <TextField
-          label="Account"
+          label="사용자 계정"
           variant="outlined"
           fullWidth
           value={account}

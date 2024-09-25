@@ -22,7 +22,7 @@ const Header = () => {
       localStorage.removeItem("refreshToken");
 
       setIsLoggedIn(false); // 로그아웃 상태로 설정
-      navigate("/"); // 로그인 페이지로 이동
+      navigate("/login"); // 로그인 페이지로 이동
     } catch (error) {
       console.error("Logout failed:", error);
       alert("Logout failed. Please try again.");
@@ -56,7 +56,7 @@ const Header = () => {
                 Login
               </Button>
               <Button color="inherit" onClick={() => navigate("/signup")}>
-                Sign Up
+                Sign In
               </Button>
             </>
           )}

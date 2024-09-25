@@ -60,11 +60,11 @@ const LoginPage = () => {
       sx={{ padding: 3 }}
     >
       <Typography variant="h4" mb={2}>
-        Enter Your Account
+        Login
       </Typography>
       <form onSubmit={handleNext}>
         <TextField
-          label="Account"
+          label="사용자 계정"
           variant="outlined"
           fullWidth
           value={account}

@@ -43,8 +43,6 @@ class ChatBotController(
         val riskLevel = extractedFeatures?.get("risk_level")
         val type = extractedFeatures?.get("type")
 
-
-
         var recommendations = chatBotService.getRecommendations(inputText, riskLevel, duration, type)
 
         return ResponseEntity.status(HttpStatus.OK).body(recommendations);
